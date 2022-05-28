@@ -514,9 +514,18 @@ trait Finder
      * @return string
      * @throws Exception
      */
-    public function findDomainJobsNamespace($domain)
+    public function findDomainJobsNamespace($domain, $job)
     {
-        return $this->findDomainNamespace($domain).'\Jobs';
+        $dirs = join('\\', explode(DS, dirname($job)));
+
+        $base = $this->findDomainNamespace($domain).'\\Jobs';
+
+        // greater than 1 because when there aren't subdirectories it will be "."
+        if (strlen($dirs) > 1) {
+            return $base.'\\'.$dirs;
+        }
+
+        return $base;
     }
 
     /**
@@ -527,9 +536,18 @@ trait Finder
      * @return string
      * @throws Exception
      */
-    public function findDomainJobsTestsNamespace($domain)
+    public function findDomainJobsTestsNamespace($domain, $job)
     {
-        return $this->findUnitTestsRootNamespace() . "\\Domains\\$domain\\Jobs";
+        $dirs = join('\\', explode(DS, dirname($job)));
+
+        $base = $this->findUnitTestsRootNamespace() . "\\Domains\\$domain\\Jobs";
+
+        // greater than 1 because when there aren't subdirectories it will be "."
+        if (strlen($dirs) > 1) {
+            return $base.'\\'.$dirs;
+        }
+
+        return $base;
     }
 
     /**

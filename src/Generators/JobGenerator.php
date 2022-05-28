@@ -13,6 +13,7 @@ class JobGenerator extends Generator
         $job = Str::job($job);
         $domain = Str::domain($domain);
         $path = $this->findJobPath($domain, $job);
+        $classname = $this->classname($job);
 
         if ($this->exists($path)) {
             throw new Exception('Job already exists');
@@ -22,12 +23,12 @@ class JobGenerator extends Generator
         $this->createDomainDirectory($domain);
 
         // Create the job
-        $namespace = $this->findDomainJobsNamespace($domain);
+        $namespace = $this->findDomainJobsNamespace($domain, $job);
 
         $content = file_get_contents($this->getStub($isQueueable));
         $content = str_replace(
             ['{{job}}', '{{namespace}}', '{{unit_namespace}}'],
-            [$job, $namespace, $this->findUnitNamespace()],
+            [$classname, $namespace, $this->findUnitNamespace()],
             $content
         );
 
@@ -46,6 +47,13 @@ class JobGenerator extends Generator
         );
     }
 
+    private function classname($name)
+    {
+        $parts = explode(DS, $name);
+
+        return array_pop($parts);
+    }
+
     /**
      * Generate test file.
      *
@@ -56,13 +64,14 @@ class JobGenerator extends Generator
     {
         $content = file_get_contents($this->getTestStub());
 
-        $namespace = $this->findDomainJobsTestsNamespace($domain);
-        $jobNamespace = $this->findDomainJobsNamespace($domain)."\\$job";
-        $testClass = $job.'Test';
+        $namespace = $this->findDomainJobsTestsNamespace($domain, $job);
+        $classname = $this->classname($job);
+        $jobNamespace = $this->findDomainJobsNamespace($domain, $job)."\\$classname";
+        $testClass = $classname.'Test';
 
         $content = str_replace(
             ['{{namespace}}', '{{testclass}}', '{{job}}', '{{job_namespace}}'],
-            [$namespace, $testClass, Str::snake($job), $jobNamespace],
+            [$namespace, $testClass, Str::snake($classname), $jobNamespace],
             $content
         );
 
