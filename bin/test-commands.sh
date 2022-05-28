@@ -72,6 +72,13 @@ lint "app/Domains/Boat/Jobs/SailJob.php"
 examine "tests/Unit/Domains/Boat/Jobs/SailJobTest.php"
 lint "tests/Unit/Domains/Boat/Jobs/SailJobTest.php"
 
+# Job in Subdirectory
+./vendor/bin/lucid make:job testing/sub/submitTradeRequest shipping
+examine "app/Domains/Shipping/Jobs/Testing/Sub/SubmitTradeRequestJob.php"
+lint "app/Domains/Shipping/Jobs/Testing/Sub/SubmitTradeRequestJob.php"
+examine "tests/Unit/Domains/Shipping/Jobs/Testing/Sub/SubmitTradeRequestJobTest.php"
+lint "tests/Unit/Domains/Shipping/Jobs/Testing/Sub/SubmitTradeRequestJobTest.php"
+
 # Model
 ./vendor/bin/lucid make:model bridge
 examine "app/Data/Models/Bridge.php"
