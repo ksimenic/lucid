@@ -3,6 +3,7 @@
 namespace Lucid\Bus;
 
 use App;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -53,6 +54,10 @@ trait UnitDispatcher
                     new Collection(),
                     $mock->getConstructorExpectationsForInstance($unit)
                 );
+            }
+
+            if ($unit instanceof ShouldQueue) {
+                return $this->dispatch($unit);
             }
 
             $result = $this->dispatchSync($unit);
